@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:ieo-official.org)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:files.ieo-official.org)",
+      "WebFetch(domain:finance.uchi.ru)",
+      "WebFetch(domain:rosfinolymp.ru)",
+      "WebFetch(domain:virtonomica.ru)",
+      "Bash(npx create-next-app@latest *)",
+      "Bash(wait)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(npx tsc *)",
+      "Bash(node *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

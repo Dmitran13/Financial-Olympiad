@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum AgeGroup {
+  JUNIOR // 11–13, 5–7 класс
+  MIDDLE // 14–16, 8–10 класс
+  SENIOR // 17–18, 11 класс
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum EventType {
+  SEASONAL
+  COMPETITOR
+  HOLIDAY
+  CRISIS
+  OPPORTUNITY
+}
+
+// ─── Auth (NextAuth) ──────────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model AuthSession {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("auth_sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── User ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String        @id @default(cuid())
+  email        String?       @unique
+  name         String?
+  nickname     String?
+  avatar       String?
+  age          Int?
+  grade        Int?
+  city         String?
+  ageGroup     AgeGroup      @default(JUNIOR)
+  createdAt    DateTime      @default(now())
+  accounts     Account[]
+  authSessions AuthSession[]
+  sessions     GameSession[]
+}
+
+// ─── Business Template ────────────────────────────────────────────────────────
+
+model BusinessTemplate {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  description String
+  emoji       String  @default("🏪")
+  // Вся экономика в JSON — новые шаблоны без правки кода
+  config      Json
+  // Брендирование переопределяется спонсором
+  branding    Json?
+  orgId       String?
+  isActive    Boolean     @default(true)
+  sessions    GameSession[]
+}
+
+// ─── Game Session ─────────────────────────────────────────────────────────────
+
+model GameSession {
+  id           String        @id @default(cuid())
+  userId       String
+  templateId   String
+  ageGroup     AgeGroup
+  status       SessionStatus @default(ACTIVE)
+  currentTurn  Int           @default(0)
+
+  cash                 Float @default(50000)
+  totalRevenue         Float @default(0)
+  totalExpenses        Float @default(0)
+  totalProfit          Float @default(0)
+  customerSatisfaction Float @default(50)
+
+  businessArchetype String?
+  behaviorProfile   Json?
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  user     User             @relation(fields: [userId], references: [id])
+  template BusinessTemplate @relation(fields: [templateId], references: [id])
+  turns    GameTurn[]
+}
+
+// ─── Game Turn ────────────────────────────────────────────────────────────────
+
+model GameTurn {
+  id         String @id @default(cuid())
+  sessionId  String
+  turnNumber Int
+
+  price      Float
+  adSpend    Float
+  staffDelta Int   @default(0)
+
+  creditTaken Float?
+  invested    Float?
+
+  revenue     Float
+  expenses    Float
+  profit      Float
+  customers   Int
+  satisfaction Float
+
+  eventId     String?
+  eventImpact Json?
+
+  explanation     String?
+  behaviorMetrics Json?
+
+  createdAt DateTime @default(now())
+
+  session GameSession @relation(fields: [sessionId], references: [id])
+  event   GameEvent?  @relation(fields: [eventId], references: [id])
+
+  @@unique([sessionId, turnNumber])
+}
+
+// ─── Game Events ──────────────────────────────────────────────────────────────
+
+model GameEvent {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String
+  type        EventType
+  effectConfig Json
+  probability  Float    @default(0.25)
+  minAgeGroup  AgeGroup @default(JUNIOR)
+  turnRange    Json?
+  turns        GameTurn[]
+}
+
+// ─── Organization (спонсор, multi-tenancy) ────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  branding  Json?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
