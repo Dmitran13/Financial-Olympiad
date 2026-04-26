@@ -58,6 +58,7 @@ export async function GET(
     })),
     archetype,
     behaviorProfile: gameSession.behaviorProfile,
+    universityRecommendations: gameSession.universityRecommendations,
     user: gameSession.user,
   });
 }

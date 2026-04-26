@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
@@ -119,6 +120,7 @@ model GameSession {
 
   businessArchetype String?
   behaviorProfile   Json?
+  universityRecommendations Json?
 
   startedAt   DateTime  @default(now())
   completedAt DateTime?

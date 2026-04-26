@@ -235,4 +235,54 @@ export function pickEvent(
   return eligible[Math.floor(Math.random() * eligible.length)];
 }
 
+// ─── University recommendations ───────────────────────────────────────────────
+
+export interface UniversityRecommendation {
+  id: string;
+  name: string;
+  emoji: string;
+  alignmentScore: number; // 0-100
+  reason: string;
+  website: string;
+}
+
+export function computeUniversityRecommendations(
+  archetype: ArchetypeId,
+  profile: BehaviorMetrics,
+  ageGroup: AgeGroup
+): UniversityRecommendation[] {
+  const { getRecommendationsByArchetype, UNIVERSITIES } = require("@/lib/university-data") as typeof import("@/lib/university-data");
+
+  const topUniversities = getRecommendationsByArchetype(archetype, 4);
+
+  return topUniversities.map((uni) => {
+    const archetypeAlign = uni.archetypeAlign[archetype] || 50;
+    const profileScore = Math.round((profile.analyticalScore + profile.marketingScore + profile.stabilityScore) / 3);
+    const alignmentScore = Math.round(archetypeAlign * 0.7 + profileScore * 0.3);
+
+    // Age-specific reasoning
+    let reason = "";
+    switch (ageGroup) {
+      case "JUNIOR":
+        reason = `Рекомендуем познакомиться с программами предподготовки и летними школами ${uni.name}. Отличный трамплин для будущего поступления!`;
+        break;
+      case "MIDDLE":
+        reason = `${uni.name} предлагает специальные программы для учащихся 8–10 классов. Ваш профиль идеально соответствует направлениям: ${uni.programs[0]}, ${uni.programs[1]}.`;
+        break;
+      case "SENIOR":
+        reason = `Самое время подать документы в ${uni.name}! Приём на программы: ${uni.programs.slice(0, 2).join(", ")}. Ваш архетип игрока идеально подходит для этого вуза.`;
+        break;
+    }
+
+    return {
+      id: uni.id,
+      name: uni.name,
+      emoji: uni.emoji,
+      alignmentScore,
+      reason,
+      website: uni.website,
+    };
+  });
+}
+
 export { TURNS_TOTAL };

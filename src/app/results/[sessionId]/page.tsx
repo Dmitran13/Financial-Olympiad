@@ -5,6 +5,7 @@ import ArchetypeCard from "@/components/results/ArchetypeCard";
 import ProfitChart from "@/components/results/ProfitChart";
 import BehaviorBars from "@/components/results/BehaviorBars";
 import CertificatePreview from "@/components/results/CertificatePreview";
+import UniversityRecommendations from "@/components/results/UniversityRecommendations";
 
 const MOCK = {
   session: { totalProfit: 187500, totalRevenue: 642000, totalExpenses: 454500, customerSatisfaction: 72, templateName: "Магазин" },
@@ -15,6 +16,24 @@ const MOCK = {
   ],
   archetype: { id: "SNIPER", name: "Финансовый снайпер", emoji: "🎯", description: "Считает каждую копейку, высокая маржа" },
   behaviorProfile: { analyticalScore: 78, marketingScore: 35, riskScore: 20, stabilityScore: 82 },
+  universityRecommendations: [
+    {
+      id: "mfti",
+      name: "МФТИ (Московский физико-технический институт)",
+      emoji: "🧮",
+      alignmentScore: 92,
+      reason: "Ваш высокий аналитический скор (78) идеально соответствует направлениям физико-технологического образования. Точное ценообразование и стабильность — ваши главные качества!",
+      website: "https://mipt.ru",
+    },
+    {
+      id: "msu-mech",
+      name: "МГУ – механико-математический факультет",
+      emoji: "📐",
+      alignmentScore: 85,
+      reason: "Факультет предлагает программы по математике и компьютерным наукам, идеальные для вашего уровня аналитического мышления.",
+      website: "https://msu.ru",
+    },
+  ],
   user: { nickname: "МаксиМ2025" },
 };
 
@@ -69,6 +88,8 @@ export default function ResultsPage() {
           </div>
         </section>
 
+        <UniversityRecommendations recommendations={data.universityRecommendations} archetype={data.archetype} />
+
         <CertificatePreview
           nickname={data.user.nickname ?? "Игрок"}
           archetype={data.archetype}
@@ -78,7 +99,7 @@ export default function ResultsPage() {
 
         <div className="flex gap-4 pb-8">
           <button onClick={() => router.push("/play")}
-            className="flex-1 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 font-bold hover:opacity-90 transition-opacity">
+            className="flex-1 py-4 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 font-bold hover:opacity-90 transition-opacity">
             🔄 Сыграть снова
           </button>
           <button onClick={() => router.push("/leaderboard")}

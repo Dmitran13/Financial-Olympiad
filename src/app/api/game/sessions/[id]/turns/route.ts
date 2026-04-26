@@ -7,6 +7,7 @@ import {
   pickEvent,
   aggregateBehaviorProfile,
   determineArchetype,
+  computeUniversityRecommendations,
   TURNS_TOTAL,
 } from "@/lib/game-engine";
 import type { TemplateConfig, TurnDecisions, BehaviorMetrics } from "@/types/game";
@@ -88,6 +89,7 @@ export async function POST(
 
   // Aggregate final result on last turn
   let businessArchetype: string | null = null;
+  let recommendations = null;
   if (isLastTurn) {
     const allMetrics = [...gameSession.turns, { behaviorMetrics: result.behaviorMetrics }]
       .map((t) => t.behaviorMetrics as BehaviorMetrics)
@@ -96,6 +98,11 @@ export async function POST(
     businessArchetype = determineArchetype(
       profile,
       gameSession.totalProfit + result.profit
+    );
+    recommendations = computeUniversityRecommendations(
+      businessArchetype as any,
+      profile,
+      gameSession.ageGroup
     );
 
     await prisma.gameSession.update({
@@ -110,6 +117,7 @@ export async function POST(
         customerSatisfaction: result.satisfaction,
         businessArchetype,
         behaviorProfile: aggregateBehaviorProfile(allMetrics) as unknown as object,
+        universityRecommendations: recommendations as unknown as object,
         completedAt: new Date(),
       },
     });
