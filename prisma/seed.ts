@@ -1,6 +1,9 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL!;
+const prisma = new PrismaClient({ adapter: new PrismaPg(databaseUrl) });
 
 async function main() {
   // ─── Business Templates ──────────────────────────────────────────────────
