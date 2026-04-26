@@ -8,47 +8,118 @@ const prisma = new PrismaClient({ adapter: new PrismaPg(databaseUrl) });
 async function main() {
   // ─── Business Templates ──────────────────────────────────────────────────
 
+  const shopConfig = {
+    startCash: 50000,
+    startStaff: 3,
+    fixedCosts: 15000,
+    staffCostPerUnit: 6000,
+    cogsRatio: 0.42,
+    baseCustomers: 600,
+    priceRange: [50, 300],
+    adRange: [0, 30000],
+    marketPrice: 150,
+  };
   await prisma.businessTemplate.upsert({
     where: { slug: "shop" },
-    update: {},
+    update: { config: shopConfig },
     create: {
       slug: "shop",
       name: "Магазин",
       description: "Небольшой продуктовый магазин в спальном районе",
       emoji: "🛒",
-      config: {
-        startCash: 50000,
-        startStaff: 3,
-        fixedCosts: 15000,
-        staffCostPerUnit: 25000,
-        cogsRatio: 0.45,
-        baseCustomers: 200,
-        priceRange: [50, 300],
-        adRange: [0, 30000],
-        marketPrice: 150,
-      },
+      config: shopConfig,
     },
   });
 
+  const cafeConfig = {
+    startCash: 60000,
+    startStaff: 4,
+    fixedCosts: 20000,
+    staffCostPerUnit: 7000,
+    cogsRatio: 0.35,
+    baseCustomers: 500,
+    priceRange: [100, 500],
+    adRange: [0, 25000],
+    marketPrice: 250,
+  };
   await prisma.businessTemplate.upsert({
     where: { slug: "cafe" },
-    update: {},
+    update: { config: cafeConfig },
     create: {
       slug: "cafe",
       name: "Кафе",
       description: "Уютное кафе рядом со школой",
       emoji: "☕",
-      config: {
-        startCash: 60000,
-        startStaff: 4,
-        fixedCosts: 20000,
-        staffCostPerUnit: 28000,
-        cogsRatio: 0.35,
-        baseCustomers: 150,
-        priceRange: [100, 500],
-        adRange: [0, 25000],
-        marketPrice: 250,
-      },
+      config: cafeConfig,
+    },
+  });
+
+  const bakeryConfig = {
+    startCash: 45000,
+    startStaff: 2,
+    fixedCosts: 10000,
+    staffCostPerUnit: 5000,
+    cogsRatio: 0.30,
+    baseCustomers: 500,
+    priceRange: [50, 250],
+    adRange: [0, 20000],
+    marketPrice: 120,
+  };
+  await prisma.businessTemplate.upsert({
+    where: { slug: "bakery" },
+    update: { config: bakeryConfig },
+    create: {
+      slug: "bakery",
+      name: "Пекарня",
+      description: "Мини-пекарня с домашней выпечкой у метро",
+      emoji: "🥐",
+      config: bakeryConfig,
+    },
+  });
+
+  const barberConfig = {
+    startCash: 40000,
+    startStaff: 2,
+    fixedCosts: 18000,
+    staffCostPerUnit: 8000,
+    cogsRatio: 0.10,
+    baseCustomers: 80,
+    priceRange: [400, 2000],
+    adRange: [0, 20000],
+    marketPrice: 800,
+  };
+  await prisma.businessTemplate.upsert({
+    where: { slug: "barber" },
+    update: { config: barberConfig },
+    create: {
+      slug: "barber",
+      name: "Барбершоп",
+      description: "Стильная мужская парикмахерская в центре",
+      emoji: "✂️",
+      config: barberConfig,
+    },
+  });
+
+  const onlineConfig = {
+    startCash: 30000,
+    startStaff: 1,
+    fixedCosts: 5000,
+    staffCostPerUnit: 10000,
+    cogsRatio: 0.50,
+    baseCustomers: 400,
+    priceRange: [100, 500],
+    adRange: [0, 40000],
+    marketPrice: 200,
+  };
+  await prisma.businessTemplate.upsert({
+    where: { slug: "online" },
+    update: { config: onlineConfig },
+    create: {
+      slug: "online",
+      name: "Онлайн-магазин",
+      description: "Интернет-магазин товаров для школьников",
+      emoji: "💻",
+      config: onlineConfig,
     },
   });
 
@@ -161,7 +232,7 @@ async function main() {
     });
   }
 
-  console.log("✅ Seed завершён: 2 шаблона, ", events.length, " событий");
+  console.log("✅ Seed завершён: 5 шаблонов,", events.length, "событий");
 }
 
 main()
