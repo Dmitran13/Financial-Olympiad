@@ -52,7 +52,7 @@ export default function OnboardingPage() {
         <div className="mb-8 flex items-center gap-2">
           {[1, 2].map((n) => (
             <div key={n} className="flex items-center gap-2">
-              <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors ${step >= n ? "bg-gradient-to-br from-indigo-600 to-violet-600 text-white" : "bg-slate-800 text-slate-500"}`}>
+              <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors ${step >= n ? "bg-linear-to-br from-indigo-600 to-violet-600 text-white" : "bg-slate-800 text-slate-500"}`}>
                 {n}
               </div>
               {n < 2 && <div className={`h-0.5 w-12 rounded-full transition-colors ${step > n ? "bg-indigo-500" : "bg-slate-800"}`} />}
@@ -77,7 +77,7 @@ export default function OnboardingPage() {
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
               </div>
               {error && <p className="text-sm text-red-400">{error}</p>}
-              <button type="submit" className="mt-2 w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+              <button type="submit" className="mt-2 w-full rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity">
                 Далее →
               </button>
             </form>
@@ -102,7 +102,7 @@ export default function OnboardingPage() {
                   ← Назад
                 </button>
                 <button type="submit" disabled={loading}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60 transition-opacity">
+                  className="flex-1 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60 transition-opacity">
                   {loading ? "Сохранение..." : "Начать игру"}
                 </button>
               </div>

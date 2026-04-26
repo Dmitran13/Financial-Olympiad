@@ -43,7 +43,7 @@ export default function LeaderboardPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-extrabold">🏆 Таблица лидеров</h1>
           <button onClick={() => router.push("/play")}
-            className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+            className="rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 px-5 py-2 text-sm font-bold text-white hover:opacity-90 transition-opacity">
             Играть
           </button>
         </div>
@@ -78,7 +78,7 @@ export default function LeaderboardPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold shrink-0">
                         {row.nickname[0].toUpperCase()}
                       </div>
                       <div>

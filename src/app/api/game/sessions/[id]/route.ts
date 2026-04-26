@@ -3,12 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id: sessionId } = await params;
+
   const gameSession = await prisma.gameSession.findFirst({
-    where: { id: params.id, userId: session.user.id },
+    where: { id: sessionId, userId: session.user.id },
     include: {
       template: true,
       turns: { orderBy: { turnNumber: "asc" } },
@@ -23,6 +25,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     status: gameSession.status,
     currentTurn: gameSession.currentTurn,
     cash: gameSession.cash,
+    totalProfit: gameSession.totalProfit,
     customerSatisfaction: lastTurn?.satisfaction ?? 60,
     template: {
       slug: gameSession.template.slug,

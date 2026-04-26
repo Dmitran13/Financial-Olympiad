@@ -1,11 +1,11 @@
 interface Props {
-  cash: number;
-  totalProfit: number;
-  satisfaction: number;
-  currentTurn: number;
+  cash?: number;
+  totalProfit?: number;
+  satisfaction?: number;
+  currentTurn?: number;
 }
 
-export default function BusinessStatus({ cash, totalProfit, satisfaction, currentTurn }: Props) {
+export default function BusinessStatus({ cash = 0, totalProfit = 0, satisfaction = 0, currentTurn = 0 }: Props) {
   const satColor = satisfaction > 60 ? "bg-green-500" : satisfaction > 40 ? "bg-yellow-500" : "bg-red-500";
   const fmt = (n: number) => n.toLocaleString("ru");
 

@@ -20,7 +20,12 @@ export default function TurnResultCard({ result, onNext }: Props) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), 50); return () => clearTimeout(t); }, []);
 
-  const fmt = (n: number) => n.toLocaleString("ru");
+  const fmt = (n: number) => {
+    if (typeof n !== "number" || Number.isNaN(n)) {
+      return "0";
+    }
+    return n.toLocaleString("ru");
+  };
 
   return (
     <div className={`transition-all duration-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
@@ -51,7 +56,7 @@ export default function TurnResultCard({ result, onNext }: Props) {
 
         {result.eventImpact && <EventBanner description={result.eventImpact.description} />}
 
-        <button onClick={onNext} className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 font-bold text-white hover:opacity-90 transition-opacity">
+        <button onClick={onNext} className="w-full py-3 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 font-bold text-white hover:opacity-90 transition-opacity">
           {result.isLastTurn ? "Посмотреть итоги 🎉" : "Следующий ход →"}
         </button>
       </div>

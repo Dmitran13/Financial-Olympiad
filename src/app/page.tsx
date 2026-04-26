@@ -21,7 +21,7 @@ export default function HomePage() {
           Финансовая симуляция для школьников 11–18 лет
         </span>
         <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
             Управляй бизнесом —
           </span>
           <br />
@@ -31,7 +31,7 @@ export default function HomePage() {
           Симуляция настоящего бизнеса для школьников. Принимай решения, зарабатывай прибыль, получи сертификат и узнай свой бизнес-архетип.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link href="/play" className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3 text-base font-bold text-white shadow-lg transition-opacity hover:opacity-90">
+          <Link href="/play" className="rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 px-8 py-3 text-base font-bold text-white shadow-lg transition-opacity hover:opacity-90">
             Начать игру →
           </Link>
           <Link href="#how-it-works" className="rounded-xl border border-slate-700 px-8 py-3 text-base font-semibold text-slate-300 transition-colors hover:border-slate-500 hover:text-white">
@@ -65,7 +65,7 @@ export default function HomePage() {
               <div className="mb-4 text-5xl">🛒</div>
               <h3 className="mb-2 text-xl font-bold text-white">Магазин</h3>
               <p className="mb-6 text-sm text-slate-400">Управляй продуктовым магазином в спальном районе. Закупки, цены, реклама — всё в твоих руках.</p>
-              <Link href="/play" className="inline-block rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90">
+              <Link href="/play" className="inline-block rounded-lg bg-linear-to-r from-indigo-600 to-violet-600 px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90">
                 Играть
               </Link>
             </div>
@@ -73,7 +73,7 @@ export default function HomePage() {
               <div className="mb-4 text-5xl">☕</div>
               <h3 className="mb-2 text-xl font-bold text-white">Кафе</h3>
               <p className="mb-6 text-sm text-slate-400">Открой уютное кафе рядом со школой. Меню, персонал, атмосфера — строй клиентскую базу с нуля.</p>
-              <Link href="/play" className="inline-block rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90">
+              <Link href="/play" className="inline-block rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90">
                 Играть
               </Link>
             </div>

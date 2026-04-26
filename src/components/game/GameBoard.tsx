@@ -48,10 +48,36 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
   const [phase, setPhase] = useState<"deciding" | "result">("deciding");
 
   useEffect(() => {
-    fetch(`/api/game/sessions/${sessionId}`)
-      .then((r) => r.json())
-      .then((data) => setGameState(data))
-      .catch(() => setGameState(MOCK));
+    async function loadSession() {
+      try {
+        const res = await fetch(`/api/game/sessions/${sessionId}`);
+        const data = await res.json();
+
+        if (
+          !res.ok ||
+          typeof data.cash !== "number" ||
+          typeof data.totalProfit !== "number" ||
+          typeof data.customerSatisfaction !== "number" ||
+          typeof data.currentTurn !== "number"
+        ) {
+          throw new Error("Invalid session response");
+        }
+
+        setGameState({
+          cash: data.cash,
+          totalProfit: data.totalProfit,
+          customerSatisfaction: data.customerSatisfaction,
+          currentTurn: data.currentTurn,
+          ageGroup: data.template?.ageGroup ?? "JUNIOR",
+          templateName: data.template?.name ?? MOCK.templateName,
+        });
+      } catch (error) {
+        console.warn("Failed to load session, falling back to mock state:", error);
+        setGameState(MOCK);
+      }
+    }
+
+    loadSession();
   }, [sessionId]);
 
   const handleSubmit = async () => {
@@ -62,18 +88,33 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(decisions),
       });
-      const data: TurnResult = await res.json();
-      setLastResult(data);
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          router.push("/auth/signin");
+          return;
+        }
+        throw new Error(data?.error || `Ошибка сервера: ${res.status}`);
+      }
+
+      if (data?.error || typeof data.profit !== "number" || typeof data.revenue !== "number" || typeof data.expenses !== "number" || typeof data.satisfaction !== "number" || typeof data.isLastTurn !== "boolean") {
+        throw new Error(data?.error || "Invalid turn result response");
+      }
+
+      const result: TurnResult = data;
+      setLastResult(result);
       setGameState((prev) => ({
         ...prev,
-        cash: prev.cash + data.profit,
-        totalProfit: prev.totalProfit + data.profit,
-        customerSatisfaction: data.satisfaction,
+        cash: prev.cash + result.profit,
+        totalProfit: prev.totalProfit + result.profit,
+        customerSatisfaction: result.satisfaction,
         currentTurn: prev.currentTurn + 1,
       }));
       setPhase("result");
-    } catch {
-      alert("Ошибка при отправке хода. Попробуй ещё раз.");
+    } catch (error) {
+      console.warn("Turn submission failed:", error);
+      alert(error instanceof Error ? error.message : "Ошибка при отправке хода. Попробуй ещё раз.");
     } finally {
       setIsSubmitting(false);
     }
@@ -100,7 +141,7 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
             <span>{gameState.templateName ?? "Бизнес"}</span>
           </div>
           <div className="bg-slate-800 rounded-full h-2">
-            <div className="bg-gradient-to-r from-indigo-500 to-violet-500 h-2 rounded-full transition-all duration-500"
+            <div className="bg-linear-to-r from-indigo-500 to-violet-500 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }} />
           </div>
         </div>
@@ -116,7 +157,7 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
           <>
             <DecisionPanel ageGroup={gameState.ageGroup} decisions={decisions} onChange={setDecisions} />
             <button onClick={handleSubmit} disabled={isSubmitting}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 font-bold text-lg disabled:opacity-50 hover:opacity-90 transition-opacity">
+              className="w-full py-4 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 font-bold text-lg disabled:opacity-50 hover:opacity-90 transition-opacity">
               {isSubmitting ? "Считаем результаты..." : "Закрыть месяц →"}
             </button>
           </>

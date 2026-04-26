@@ -10,7 +10,7 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2 text-xl font-extrabold tracking-tight">
           <span>💹</span>
-          <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
             ФинОлимп
           </span>
         </Link>
@@ -33,7 +33,7 @@ export default function Header() {
               )}
             </div>
           ) : (
-            <button onClick={() => signIn()} className="rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-1.5 text-sm font-semibold text-white shadow hover:opacity-90 transition-opacity">
+            <button onClick={() => signIn()} className="rounded-lg bg-linear-to-r from-indigo-600 to-violet-600 px-4 py-1.5 text-sm font-semibold text-white shadow hover:opacity-90 transition-opacity">
               Войти
             </button>
           )}
