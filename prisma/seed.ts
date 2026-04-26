@@ -123,6 +123,81 @@ async function main() {
     },
   });
 
+  const sportsConfig = {
+    startCash: 70000,
+    startStaff: 3,
+    fixedCosts: 25000,
+    staffCostPerUnit: 12000,
+    cogsRatio: 0.05,
+    baseCustomers: 60,
+    priceRange: [1000, 5000],
+    adRange: [0, 30000],
+    marketPrice: 2500,
+    priceLabel: "Цена абонемента",
+    adLabel: "Продвижение",
+  };
+  await prisma.businessTemplate.upsert({
+    where: { slug: "sports_school" },
+    update: { config: sportsConfig },
+    create: {
+      slug: "sports_school",
+      name: "Спортивная школа",
+      description: "Секции футбола, баскетбола и плавания для детей",
+      emoji: "⚽",
+      config: sportsConfig,
+    },
+  });
+
+  const itSchoolConfig = {
+    startCash: 60000,
+    startStaff: 3,
+    fixedCosts: 25000,
+    staffCostPerUnit: 15000,
+    cogsRatio: 0.05,
+    baseCustomers: 30,
+    priceRange: [2000, 12000],
+    adRange: [0, 40000],
+    marketPrice: 5000,
+    priceLabel: "Стоимость курса",
+    adLabel: "Маркетинг",
+  };
+  await prisma.businessTemplate.upsert({
+    where: { slug: "it_school" },
+    update: { config: itSchoolConfig },
+    create: {
+      slug: "it_school",
+      name: "IT-школа",
+      description: "Курсы программирования и робототехники для школьников",
+      emoji: "🖥️",
+      config: itSchoolConfig,
+    },
+  });
+
+  const restaurantConfig = {
+    startCash: 80000,
+    startStaff: 5,
+    fixedCosts: 30000,
+    staffCostPerUnit: 8000,
+    cogsRatio: 0.38,
+    baseCustomers: 400,
+    priceRange: [300, 1500],
+    adRange: [0, 35000],
+    marketPrice: 600,
+    priceLabel: "Средний чек",
+    adLabel: "Реклама",
+  };
+  await prisma.businessTemplate.upsert({
+    where: { slug: "restaurant" },
+    update: { config: restaurantConfig },
+    create: {
+      slug: "restaurant",
+      name: "Ресторан",
+      description: "Авторский ресторан с уникальным меню",
+      emoji: "🍽️",
+      config: restaurantConfig,
+    },
+  });
+
   // ─── Game Events ─────────────────────────────────────────────────────────
 
   const events = [
@@ -232,7 +307,7 @@ async function main() {
     });
   }
 
-  console.log("✅ Seed завершён: 5 шаблонов,", events.length, "событий");
+  console.log("✅ Seed завершён: 8 шаблонов,", events.length, "событий");
 }
 
 main()

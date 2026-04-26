@@ -10,6 +10,8 @@ export interface TemplateConfig {
   priceRange: [number, number];   // [min, max] допустимые цены
   adRange: [number, number];      // [min, max] допустимые расходы на рекламу
   marketPrice: number;            // рыночная цена конкурентов
+  priceLabel?: string;            // "Цена товара" / "Цена абонемента" / "Стоимость курса"
+  adLabel?: string;               // "Реклама" / "Продвижение" / "Маркетинг"
 }
 
 export interface TurnDecisions {
@@ -18,6 +20,7 @@ export interface TurnDecisions {
   staffDelta: number;
   creditTaken?: number;
   invested?: number;
+  qualitySpend?: number;
 }
 
 export interface TurnResult {

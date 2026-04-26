@@ -7,6 +7,16 @@ import TurnResultCard from "./TurnResultCard";
 
 type AgeGroup = "JUNIOR" | "MIDDLE" | "SENIOR";
 
+interface TemplateInfo {
+  name?: string;
+  ageGroup?: AgeGroup;
+  priceRange?: [number, number];
+  adRange?: [number, number];
+  marketPrice?: number;
+  priceLabel?: string;
+  adLabel?: string;
+}
+
 interface GameState {
   cash: number;
   totalProfit: number;
@@ -14,6 +24,7 @@ interface GameState {
   currentTurn: number;
   ageGroup: AgeGroup;
   templateName?: string;
+  templateConfig?: TemplateInfo;
 }
 
 interface TurnResult {
@@ -32,6 +43,7 @@ interface Decisions {
   staffDelta: number;
   creditTaken?: number;
   invested?: number;
+  qualitySpend?: number;
 }
 
 const MOCK: GameState = {
@@ -63,6 +75,8 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
           throw new Error("Invalid session response");
         }
 
+        const cfg = data.template?.config ?? {};
+        const marketPrice = cfg.marketPrice ?? 150;
         setGameState({
           cash: data.cash,
           totalProfit: data.totalProfit,
@@ -70,7 +84,15 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
           currentTurn: data.currentTurn,
           ageGroup: data.template?.ageGroup ?? "JUNIOR",
           templateName: data.template?.name ?? MOCK.templateName,
+          templateConfig: {
+            priceRange: cfg.priceRange,
+            adRange: cfg.adRange,
+            marketPrice: cfg.marketPrice,
+            priceLabel: cfg.priceLabel,
+            adLabel: cfg.adLabel,
+          },
         });
+        setDecisions((prev) => ({ ...prev, price: marketPrice }));
       } catch (error) {
         console.warn("Failed to load session, falling back to mock state:", error);
         setGameState(MOCK);
@@ -155,7 +177,7 @@ export default function GameBoard({ sessionId }: { sessionId: string }) {
 
         {phase === "deciding" && (
           <>
-            <DecisionPanel ageGroup={gameState.ageGroup} decisions={decisions} onChange={setDecisions} />
+            <DecisionPanel ageGroup={gameState.ageGroup} decisions={decisions} onChange={setDecisions} templateConfig={gameState.templateConfig} />
             <button onClick={handleSubmit} disabled={isSubmitting}
               className="w-full py-4 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 font-bold text-lg disabled:opacity-50 hover:opacity-90 transition-opacity">
               {isSubmitting ? "Считаем результаты..." : "Закрыть месяц →"}

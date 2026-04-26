@@ -15,7 +15,25 @@
       "Bash(node *)",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npm run *)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/leaderboard)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/play)",
+      "Bash(openssl rand *)",
+      "Bash(pkill -f \"prisma migrate\")",
+      "Bash(npx ts-node *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000/api/auth/callback/google)",
+      "Bash(grep -v \"^$\")",
+      "Bash(curl -sv \"http://localhost:3000/api/auth/providers\")",
+      "Bash(curl -sv \"http://localhost:3000/api/auth/callback/google?code=test&state=test\")",
+      "Bash(curl -s \"http://localhost:3000/api/auth/error?error=OAuthCallback\")",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(curl *)",
+      "Bash(npm uninstall *)"
     ]
   }
 }

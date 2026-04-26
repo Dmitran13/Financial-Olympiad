@@ -19,7 +19,7 @@ export function simulateTurn(
   currentStaff: number,
   event: GameEvent | null
 ): TurnResult {
-  const { price, adSpend, staffDelta, creditTaken = 0, invested = 0 } = decisions;
+  const { price, adSpend, staffDelta, creditTaken = 0, invested = 0, qualitySpend = 0 } = decisions;
 
   // Staff after decisions
   const newStaff = Math.max(1, currentStaff + staffDelta);
@@ -39,12 +39,16 @@ export function simulateTurn(
   // Capacity: staff limits how many customers you can serve
   const staffCapacityMultiplier = Math.min(1.2, newStaff / config.startStaff);
 
+  // Quality investment: better service → word-of-mouth → more customers
+  const qualityMultiplier = 1 + Math.min(0.15, qualitySpend / 133333);
+
   let customers = Math.round(
     config.baseCustomers *
       priceMultiplier *
       adEffect *
       satisfactionMultiplier *
-      staffCapacityMultiplier
+      staffCapacityMultiplier *
+      qualityMultiplier
   );
 
   let revenue = customers * price;
@@ -53,7 +57,7 @@ export function simulateTurn(
   const staffCosts = newStaff * config.staffCostPerUnit;
   const cogs = revenue * config.cogsRatio;
   let expenses =
-    config.fixedCosts + staffCosts + adSpend + cogs + invested;
+    config.fixedCosts + staffCosts + adSpend + cogs + invested + qualitySpend;
 
   // Credit adds cash but incurs 15% monthly interest cost
   if (creditTaken > 0) {
@@ -92,6 +96,8 @@ export function simulateTurn(
   if (staffCapacityMultiplier < 0.8) newSatisfaction -= 10;
   // Ads signal quality / awareness
   if (adSpend > 5000) newSatisfaction += 5;
+  // Quality investment directly improves satisfaction
+  if (qualitySpend > 0) newSatisfaction += Math.min(15, qualitySpend / 1000);
   if (eventImpact?.satisfactionDelta) newSatisfaction += eventImpact.satisfactionDelta;
   newSatisfaction = Math.max(0, Math.min(100, newSatisfaction));
 
