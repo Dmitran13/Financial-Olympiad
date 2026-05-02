@@ -8,6 +8,11 @@ interface Decisions {
   creditTaken?: number;
   invested?: number;
   qualitySpend?: number;
+  staffTraining?: number;
+  promoDiscount?: number;
+  assortment?: number;
+  loyaltyProgram?: number;
+  partnership?: number;
 }
 
 interface Props {
@@ -18,6 +23,7 @@ interface Props {
 }
 
 const fmt = (n: number) => n.toLocaleString("ru");
+
 
 export default function DecisionPanel({ ageGroup, decisions, onChange, templateConfig }: Props) {
   const set = (key: keyof Decisions) => (val: number) => onChange({ ...decisions, [key]: val });
@@ -30,18 +36,19 @@ export default function DecisionPanel({ ageGroup, decisions, onChange, templateC
   const adLabel = templateConfig?.adLabel ?? "Реклама в месяц";
   const marketPrice = templateConfig?.marketPrice;
 
+  const isMiddle = ageGroup === "MIDDLE" || ageGroup === "SENIOR";
+  const isSenior = ageGroup === "SENIOR";
+
   return (
-    <div className="rounded-2xl bg-slate-900 ring-1 ring-slate-800 p-6 space-y-6">
+    <div className="rounded-2xl bg-slate-900 ring-1 ring-slate-800 p-6 space-y-5">
       <h3 className="text-lg font-bold text-white">Решения на месяц</h3>
 
-      {/* Price */}
+      {/* Цена */}
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="text-sm font-medium text-slate-300">{priceLabel}</label>
           <div className="flex items-center gap-2">
-            {marketPrice && (
-              <span className="text-xs text-slate-500">рынок: {fmt(marketPrice)} ₽</span>
-            )}
+            {marketPrice && <span className="text-xs text-slate-500">рынок: {fmt(marketPrice)} ₽</span>}
             <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded font-bold">{fmt(decisions.price)} ₽</span>
           </div>
         </div>
@@ -53,7 +60,22 @@ export default function DecisionPanel({ ageGroup, decisions, onChange, templateC
         </div>
       </div>
 
-      {/* Ad spend */}
+      {/* Промо-акция — JUNIOR+ */}
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-slate-300">Промо-скидка</label>
+          <span className="bg-rose-600 text-white text-xs px-2 py-0.5 rounded font-bold">
+            {decisions.promoDiscount ?? 0}%
+          </span>
+        </div>
+        <input type="range" min={0} max={30} step={5} value={decisions.promoDiscount ?? 0}
+          onChange={(e) => set("promoDiscount")(Number(e.target.value))}
+          className="w-full accent-rose-500" />
+        <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0%</span><span>30%</span></div>
+        <p className="text-xs text-slate-500 mt-1">Больше клиентов, но ниже маржа</p>
+      </div>
+
+      {/* Реклама */}
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="text-sm font-medium text-slate-300">{adLabel}</label>
@@ -65,8 +87,21 @@ export default function DecisionPanel({ ageGroup, decisions, onChange, templateC
         <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0 ₽</span><span>{fmt(adMax)} ₽</span></div>
       </div>
 
-      {/* Quality — MIDDLE and SENIOR */}
-      {(ageGroup === "MIDDLE" || ageGroup === "SENIOR") && (
+      {/* Обучение персонала — JUNIOR+ */}
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-slate-300">Обучение персонала</label>
+          <span className="bg-sky-600 text-white text-xs px-2 py-0.5 rounded font-bold">{fmt(decisions.staffTraining ?? 0)} ₽</span>
+        </div>
+        <input type="range" min={0} max={15000} step={1000} value={decisions.staffTraining ?? 0}
+          onChange={(e) => set("staffTraining")(Number(e.target.value))}
+          className="w-full accent-sky-500" />
+        <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0 ₽</span><span>15 000 ₽</span></div>
+        <p className="text-xs text-slate-500 mt-1">Каждый сотрудник обслуживает больше клиентов</p>
+      </div>
+
+      {/* Качество сервиса — MIDDLE+ */}
+      {isMiddle && (
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-medium text-slate-300">Качество сервиса</label>
@@ -76,12 +111,42 @@ export default function DecisionPanel({ ageGroup, decisions, onChange, templateC
             onChange={(e) => set("qualitySpend")(Number(e.target.value))}
             className="w-full accent-emerald-500" />
           <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0 ₽</span><span>20 000 ₽</span></div>
-          <p className="text-xs text-slate-500 mt-1">Повышает лояльность клиентов и сарафанное радио</p>
+          <p className="text-xs text-slate-500 mt-1">Повышает лояльность и сарафанное радио</p>
         </div>
       )}
 
-      {/* Staff — MIDDLE and SENIOR */}
-      {(ageGroup === "MIDDLE" || ageGroup === "SENIOR") && (
+      {/* Расширение ассортимента — MIDDLE+ */}
+      {isMiddle && (
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium text-slate-300">Расширение ассортимента</label>
+            <span className="bg-amber-600 text-white text-xs px-2 py-0.5 rounded font-bold">{fmt(decisions.assortment ?? 0)} ₽</span>
+          </div>
+          <input type="range" min={0} max={20000} step={1000} value={decisions.assortment ?? 0}
+            onChange={(e) => set("assortment")(Number(e.target.value))}
+            className="w-full accent-amber-500" />
+          <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0 ₽</span><span>20 000 ₽</span></div>
+          <p className="text-xs text-slate-500 mt-1">Больше позиций → выше средний чек</p>
+        </div>
+      )}
+
+      {/* Программа лояльности — MIDDLE+ */}
+      {isMiddle && (
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium text-slate-300">Программа лояльности</label>
+            <span className="bg-pink-600 text-white text-xs px-2 py-0.5 rounded font-bold">{fmt(decisions.loyaltyProgram ?? 0)} ₽</span>
+          </div>
+          <input type="range" min={0} max={15000} step={1000} value={decisions.loyaltyProgram ?? 0}
+            onChange={(e) => set("loyaltyProgram")(Number(e.target.value))}
+            className="w-full accent-pink-500" />
+          <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0 ₽</span><span>15 000 ₽</span></div>
+          <p className="text-xs text-slate-500 mt-1">Бонусы и кэшбэк удерживают постоянных клиентов</p>
+        </div>
+      )}
+
+      {/* Сотрудники — MIDDLE+ */}
+      {isMiddle && (
         <div>
           <label className="text-sm font-medium text-slate-300 block mb-2">Сотрудники</label>
           <div className="flex items-center gap-4">
@@ -96,9 +161,20 @@ export default function DecisionPanel({ ageGroup, decisions, onChange, templateC
         </div>
       )}
 
-      {/* Credit + Invest — SENIOR only */}
-      {ageGroup === "SENIOR" && (
+      {/* SENIOR: Кредит + Инвестиции + Партнёрство */}
+      {isSenior && (
         <>
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-sm font-medium text-slate-300">Партнёрство</label>
+              <span className="bg-teal-600 text-white text-xs px-2 py-0.5 rounded font-bold">{fmt(decisions.partnership ?? 0)} ₽</span>
+            </div>
+            <input type="range" min={0} max={30000} step={2000} value={decisions.partnership ?? 0}
+              onChange={(e) => set("partnership")(Number(e.target.value))}
+              className="w-full accent-teal-500" />
+            <div className="flex justify-between text-xs text-slate-500 mt-1"><span>0 ₽</span><span>30 000 ₽</span></div>
+            <p className="text-xs text-slate-500 mt-1">Корпоративные клиенты и B2B-сделки</p>
+          </div>
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-sm font-medium text-slate-300">Кредит (15% в мес.)</label>

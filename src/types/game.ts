@@ -21,6 +21,11 @@ export interface TurnDecisions {
   creditTaken?: number;
   invested?: number;
   qualitySpend?: number;
+  staffTraining?: number;   // 0–15000: обучение персонала
+  promoDiscount?: number;   // 0–30: промо-скидка в %
+  assortment?: number;      // 0–20000: расширение ассортимента
+  loyaltyProgram?: number;  // 0–15000: программа лояльности
+  partnership?: number;     // 0–30000: партнёрство (SENIOR)
 }
 
 export interface TurnResult {

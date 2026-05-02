@@ -44,6 +44,11 @@ interface Decisions {
   creditTaken?: number;
   invested?: number;
   qualitySpend?: number;
+  staffTraining?: number;
+  promoDiscount?: number;
+  assortment?: number;
+  loyaltyProgram?: number;
+  partnership?: number;
 }
 
 const MOCK: GameState = {

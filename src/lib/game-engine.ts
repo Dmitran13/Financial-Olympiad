@@ -19,7 +19,19 @@ export function simulateTurn(
   currentStaff: number,
   event: GameEvent | null
 ): TurnResult {
-  const { price, adSpend, staffDelta, creditTaken = 0, invested = 0, qualitySpend = 0 } = decisions;
+  const {
+    price,
+    adSpend,
+    staffDelta,
+    creditTaken = 0,
+    invested = 0,
+    qualitySpend = 0,
+    staffTraining = 0,
+    promoDiscount = 0,
+    assortment = 0,
+    loyaltyProgram = 0,
+    partnership = 0,
+  } = decisions;
 
   // Staff after decisions
   const newStaff = Math.max(1, currentStaff + staffDelta);
@@ -39,25 +51,47 @@ export function simulateTurn(
   // Capacity: staff limits how many customers you can serve
   const staffCapacityMultiplier = Math.min(1.2, newStaff / config.startStaff);
 
-  // Quality investment: better service → word-of-mouth → more customers
+  // Promo discount: lower effective price → more customers, less revenue per head
+  const effectivePrice = price * (1 - promoDiscount / 100);
+  const effectivePriceRatio = effectivePrice / config.marketPrice;
+  const promoPriceMultiplier = Math.max(0.2, 2 - effectivePriceRatio * 1.2);
+
+  // Quality investment: better service → word-of-mouth
   const qualityMultiplier = 1 + Math.min(0.15, qualitySpend / 133333);
+
+  // Staff training: more efficient employees → serve more customers
+  const staffTrainingMultiplier = 1 + Math.min(0.20, staffTraining / 75000);
+
+  // Loyalty program: satisfied base returns more
+  const loyaltyCustomerBoost = 1 + Math.min(0.12, loyaltyProgram / 125000);
+
+  // Partnership: B2B / corporate clients
+  const partnershipMultiplier = 1 + Math.min(0.25, partnership / 120000);
 
   let customers = Math.round(
     config.baseCustomers *
-      priceMultiplier *
+      promoPriceMultiplier *
       adEffect *
       satisfactionMultiplier *
       staffCapacityMultiplier *
-      qualityMultiplier
+      qualityMultiplier *
+      staffTrainingMultiplier *
+      loyaltyCustomerBoost *
+      partnershipMultiplier
   );
 
-  let revenue = customers * price;
+  // Assortment: higher average check per customer
+  const assortmentRevenueMultiplier = 1 + Math.min(0.15, assortment / 133333);
+
+  // Revenue uses effective (discounted) price + assortment boost
+  let revenue = customers * effectivePrice * assortmentRevenueMultiplier;
 
   // Expenses
   const staffCosts = newStaff * config.staffCostPerUnit;
   const cogs = revenue * config.cogsRatio;
   let expenses =
-    config.fixedCosts + staffCosts + adSpend + cogs + invested + qualitySpend;
+    config.fixedCosts + staffCosts + adSpend + cogs + invested +
+    qualitySpend + staffTraining + assortment + loyaltyProgram + partnership;
 
   // Credit adds cash but incurs 15% monthly interest cost
   if (creditTaken > 0) {
@@ -88,16 +122,19 @@ export function simulateTurn(
 
   const profit = revenue - expenses;
 
-  // Satisfaction: driven by price-vs-market and whether we served everyone
+  // Satisfaction: driven by effective price-vs-market and whether we served everyone
   let newSatisfaction = currentSatisfaction;
-  // Cheaper → happier; expensive → unhappier
-  newSatisfaction += (1 - priceRatio) * 15;
+  newSatisfaction += (1 - effectivePriceRatio) * 15;
   // Low staff → frustration
   if (staffCapacityMultiplier < 0.8) newSatisfaction -= 10;
   // Ads signal quality / awareness
   if (adSpend > 5000) newSatisfaction += 5;
   // Quality investment directly improves satisfaction
   if (qualitySpend > 0) newSatisfaction += Math.min(15, qualitySpend / 1000);
+  // Loyalty program boosts satisfaction
+  if (loyaltyProgram > 0) newSatisfaction += Math.min(20, loyaltyProgram / 750);
+  // Promo discount delights customers
+  if (promoDiscount > 0) newSatisfaction += Math.min(8, promoDiscount * 0.3);
   if (eventImpact?.satisfactionDelta) newSatisfaction += eventImpact.satisfactionDelta;
   newSatisfaction = Math.max(0, Math.min(100, newSatisfaction));
 
